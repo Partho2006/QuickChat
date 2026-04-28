@@ -7,11 +7,15 @@ const HomePage = () => {
     const [selectedUser, setSelectedUser] = useState(false);
 
   return (
-    <div className='border w-full h-screen sm:px-[15%] sm:py-[15%]'>
-        <div className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-[100%] grid grid-cols-1 relative ${selectedUser ? 'md:grid-cols-[1fr_1.5fr_1fr] xl:grid-cols-[1fr_2fr_1fr]' : 'md:grid-cols-2'}`}>
-            <Sidebar />
-            <ChartContainer />
-            <RightSidebar />
+    <div className="w-full h-screen flex items-center justify-center">
+
+  <div className={`w-full max-w-7xl h-[90vh] backdrop-blur-xl border border-gray-600 rounded-2xl overflow-hidden grid 
+  ${selectedUser 
+    ? 'md:grid-cols-[300px_1fr_250px]' 
+    : 'md:grid-cols-[300px_1fr]'}`}>     
+            <Sidebar selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+            <ChartContainer selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+            <RightSidebar selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
         </div>
     </div>
   )
