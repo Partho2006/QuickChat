@@ -22,15 +22,70 @@ yarn-error.log*
 Thumbs.db
 
 # IDE files
+.# ----------------------------
+# Node modules
+# ----------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ----------------------------
+# Build folders
+# ----------------------------
+dist/
+build/
+.next/
+out/
+
+# ----------------------------
+# Environment variables
+# ----------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ----------------------------
+# Logs
+# ----------------------------
+logs
+*.log
+
+# ----------------------------
+# OS files
+# ----------------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------------
+# IDE / Editor
+# ----------------------------
 .vscode/
 .idea/
 
-# cache
+# ----------------------------
+# Cache
+# ----------------------------
 .cache/
 .parcel-cache/
+.vite/
 
-# next.js (if used)
-.next/
+# ----------------------------
+# Temporary files
+# ----------------------------
+*.tmp
+*.temp
 
-# misc
+# ----------------------------
+# Coverage
+# ----------------------------
 coverage/
+
+# ----------------------------
+# Misc
+# ----------------------------
+*.pem
+*.pid
