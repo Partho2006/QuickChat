@@ -13,14 +13,12 @@ export const AuthProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [socket, setSocket] = useState(null);
-    const [isLoading, setIsLoading] = useState(true); // ✅ ADD THIS
+    const [isLoading, setIsLoading] = useState(true); 
     const socketRef = useRef(null);
 
        const connectSocket = (userData) => {
-        // ✅ Check via ref, not state — avoids stale closure
         if (!userData || socketRef.current?.connected) return;
 
-        // ✅ Disconnect any lingering socket before creating a new one
         socketRef.current?.disconnect();
 
         const newSocket = io(backendUrl, {
@@ -35,7 +33,7 @@ export const AuthProvider = ({ children }) => {
             setOnlineUsers(userIds);
         });
     };
-    
+
     const checkAuth = async () => {
         try {
             const { data } = await axios.get("/api/auth/check");
@@ -46,7 +44,7 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             toast.error(error.message);
         } finally {
-            setIsLoading(false); // ✅ Always mark loading done
+            setIsLoading(false); 
         }
     };
 
@@ -55,7 +53,7 @@ export const AuthProvider = ({ children }) => {
             const { data } = await axios.post(`/api/auth/${state}`, credentials);
             if (data.success) {
                 setAuthUser(data.userData);
-                // ✅ Set header before connecting socket
+
                 axios.defaults.headers.common["token"] = data.token;
                 setToken(data.token);
                 localStorage.setItem("token", data.token);
@@ -75,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         setAuthUser(null);
         setOnlineUsers([]);
         axios.defaults.headers.common["token"] = null;
-        // ✅ Disconnect via ref
+
         socketRef.current?.disconnect();
         socketRef.current = null;
         setSocket(null);
@@ -99,7 +97,7 @@ export const AuthProvider = ({ children }) => {
             axios.defaults.headers.common["token"] = token;
             checkAuth();
         } else {
-            setIsLoading(false); // ✅ No token = not loading
+            setIsLoading(false); 
         }
     }, [token]);
 

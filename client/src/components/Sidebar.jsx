@@ -1,9 +1,24 @@
-import React from 'react'
 import assets, { userDummyData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../../context/AuthContext'
+import { useContext, useState, useEffect, useRef } from 'react'
 
 const Sidebar = ({ selectedUser, setSelectedUser }) => {
+    const { logout } = useContext(AuthContext);
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+    const menuRef = useRef(null);
+
+    // close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, []);
 
     return (
         <div className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}>
@@ -15,28 +30,43 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
                     <img src={assets.logo} alt="Logo" className='max-w-40' />
 
                     {/* Menu */}
-                    <div className="relative group">
+                    <div className="relative" ref={menuRef}>
                         <img
                             src={assets.menu_icon}
                             alt="Menu"
                             className='max-h-5 cursor-pointer'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setOpen(prev => !prev);
+                            }}
                         />
 
                         {/* Dropdown */}
-                        <div className="absolute right-0 mt-2 w-40 bg-[#282142] rounded-lg shadow-lg p-3 hidden group-hover:block">
-                            <p
-                                onClick={() => navigate('/profile')}
-                                className="cursor-pointer text-sm hover:text-gray-300"
-                            >
-                                Edit Profile
-                            </p>
+                        {open && (
+                            <div className="absolute right-0 mt-2 w-40 bg-[#282142] rounded-lg shadow-lg p-3 z-50">
+                                <p
+                                    onClick={() => {
+                                        navigate('/profile');
+                                        setOpen(false);
+                                    }}
+                                    className="cursor-pointer text-sm hover:text-gray-300"
+                                >
+                                    Edit Profile
+                                </p>
 
-                            <hr className="my-2 border-t border-gray-500" />
+                                <hr className="my-2 border-t border-gray-500" />
 
-                            <p className="cursor-pointer text-sm hover:text-gray-300">
-                                Logout
-                            </p>
-                        </div>
+                                <p
+                                    onClick={() => {
+                                        logout();
+                                        setOpen(false);
+                                    }}
+                                    className="cursor-pointer text-sm hover:text-gray-300"
+                                >
+                                    Logout
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                 </div>
@@ -49,15 +79,25 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
 
             <div className="flex flex-col">
                 {userDummyData.map((user, index)=> (
-                <div onClick={()=> {setSelectedUser(user)}} className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && 'bg-[#282142]/50'}`}>
+                <div 
+                    key={user._id} // ✅ FIX key warning
+                    onClick={()=> {setSelectedUser(user)}} 
+                    className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && 'bg-[#282142]/50'}`}
+                >
                     <img src={user?.profilePic || assets.avatar_icon} alt="ProfilePic" className='w-[35px] aspect-[1/1] rounded-full' />
                     <div className="flex flex-col leading-5">
-                        <p className="">{user.fullName}</p>
+                        <p>{user.fullName}</p>
                         {
-                            index < 3 ? <span className='text-green-400 text-xs'>Online</span> : <span className='text-neutral-400 text-xs'>Offline</span>
+                            index < 3 
+                            ? <span className='text-green-400 text-xs'>Online</span> 
+                            : <span className='text-neutral-400 text-xs'>Offline</span>
                         }
                     </div>
-                    {index > 2 && <p className='absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50'>{index}</p>}
+                    {index > 2 && (
+                        <p className='absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50'>
+                            {index}
+                        </p>
+                    )}
                 </div>
                 ))}
             </div>
