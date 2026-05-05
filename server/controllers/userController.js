@@ -39,7 +39,15 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const userData = await User.findOne({ email })
+        const userData = await User.findOne({ email });
+
+        if (!email || !password) {
+            return res.json({ success: false, message: "Missing credentials" });
+        }
+
+        if (!userData) {
+            return res.json({ success: false, message: "User not found" });
+        }
 
         const isPasswordCorrect = await bcrypt.compare(password, userData.password);
 
@@ -47,15 +55,20 @@ export const login = async (req, res) => {
             return res.json({ success: false, message: "Invalid credentials" });
         }
 
-        const token = generateToken(newUser._id);
+        const token = generateToken(userData._id);
 
-        res.json({ success: true, userData: newUser, token, message: "Login successfully" });
+        res.json({
+            success: true,
+            userData: userData,
+            token,
+            message: "Login successfully"
+        });
 
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });
     }
-}
+};
 
 // Controller to check user is authenticated
 export const checkAuth = (req, res) => {
@@ -65,23 +78,23 @@ export const checkAuth = (req, res) => {
 // Controller to update user profile details
 export const updateProfile = async (req, res) => {
     try {
-        const { fullName, email, bio } = req.body;
+        const { fullName, email, bio, profilePic } = req.body;
 
         const userId = req.user._id;
         let updatedUser;
 
-        if (!ProfilePic) {
-            updatedUser = await User.findByIdAndUpdate(userId, {bio, fullName}, {new: true});
+        if (!profilePic) {
+            updatedUser = await User.findByIdAndUpdate(userId, { bio, fullName }, { new: true });
         } else {
-            const upload = await cloudinary.uploader.upload(ProfilePic);
+            const upload = await cloudinary.uploader.upload(profilePic);
 
-            updatedUser = await User.findByIdAndUpdate(userId, {profilePic: upload.secure_url, bio, fullName}, {new: true});
+            updatedUser = await User.findByIdAndUpdate(userId, { profilePic: upload.secure_url, bio, fullName }, { new: true });
         }
 
         res.json({ success: true, user: updatedUser });
 
     } catch (error) {
-console.log(error.message);
+        console.log(error.message);
         res.json({ success: false, message: error.message });
     }
 }
