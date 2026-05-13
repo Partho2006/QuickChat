@@ -69,6 +69,7 @@ export const chatProvider = ({ children }) => {
     }
 
     // func to unsubscribe from messages
+    const unsubscribe
 
     const value = {
 
