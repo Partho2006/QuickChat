@@ -2,8 +2,11 @@ import assets, { userDummyData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext'
 import { useContext, useState, useEffect, useRef } from 'react'
+import { ChatContext } from '../../context/ChatContext'
 
-const Sidebar = ({ selectedUser, setSelectedUser }) => {
+const Sidebar = () => {
+    const { getUsers, users, selectedUser, setSelectedUser, unseenMessagse, setUnseenMessages } = useContext(ChatContext);
+
     const { logout } = useContext(AuthContext);
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
