@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { formatMessageTime } from '../lib/utils';
 import { ChatContext } from '../../context/ChatContext';
 import { AuthContext } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const ChartContainer = () => {
   const { messages, selectedUser, setSelectedUser, sendMessage, getMessages } = useContext(ChatContext);
@@ -20,7 +21,23 @@ const ChartContainer = () => {
   const handleSendMessage = async (e)=> {
     e.preventDefault();
     if (input.trim() === "") return null;
-    await sendMessage({text: input.trim})
+    await sendMessage({text: input.trim()});
+    setInput("");
+  }
+
+  // Handle sending an img
+  const handleSendImage = async (e)=> {
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith('image/')) {
+      toast.error("Select an image file");
+    }
+    const reader = new FileReader();
+
+    reader.onloadend = async ()=> {
+      await sendMessage({image: reader.result})
+      e.target.value = "";
+    }
+    reader.readAsDataURL(file);
   }
 
   return selectedUser ? (
