@@ -3,7 +3,7 @@ import { AuthContext } from "./AuthContext";
 import toast from "react-hot-toast";
 
 export const ChatContext = createContext();
-export const chatProvider = ({ children }) => {
+export const ChatProvider = ({ children }) => {
 
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
@@ -83,7 +83,7 @@ export const chatProvider = ({ children }) => {
     } 
 
     return (
-    <ChatContext.Provider>
+    <ChatContext.Provider value={value}>
         { children }
     </ChatContext.Provider>
 )

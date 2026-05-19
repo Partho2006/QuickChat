@@ -1,16 +1,29 @@
-import assets, { userDummyData } from '../assets/assets'
+import assets from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext'
 import { useContext, useState, useEffect, useRef } from 'react'
 import { ChatContext } from '../../context/ChatContext'
 
 const Sidebar = () => {
-    const { getUsers, users, selectedUser, setSelectedUser, unseenMessagse, setUnseenMessages } = useContext(ChatContext);
+    const { getUsers, users, selectedUser, setSelectedUser, unseenMessages, setUnseenMessages } = useContext(ChatContext);
 
-    const { logout } = useContext(AuthContext);
+    const { logout, onlineUsers } = useContext(AuthContext);
+
+    const [input, setInput] = useState("");
     const [open, setOpen] = useState(false);
+
+    const filteredUsers = input
+  ? users.filter((user) =>
+      user?.fullName?.toLowerCase().includes(input.toLowerCase())
+    )
+  : users;
+
     const navigate = useNavigate();
     const menuRef = useRef(null);
+
+    useEffect(()=> {
+        getUsers();
+    }, [onlineUsers])
 
     // close dropdown on outside click
     useEffect(() => {
@@ -76,14 +89,14 @@ const Sidebar = () => {
 
                 <div className="bg-[#282142] rounded-full flex items-center gap-2 py-3 px-4 mt-5">
                     <img src={assets.search_icon} alt="Search" className='w-3' />
-                    <input type="text" className='bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1' placeholder='Search User...' />
+                    <input onChange={(e)=> setInput(e.target.value)} type="text" className='bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1' placeholder='Search User...' />
                 </div>
             </div>
 
             <div className="flex flex-col">
-                {userDummyData.map((user, index)=> (
+                {filteredUsers.map((user, index)=> (
                 <div 
-                    key={user._id} // ✅ FIX key warning
+                    key={user._id} 
                     onClick={()=> {setSelectedUser(user)}} 
                     className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && 'bg-[#282142]/50'}`}
                 >
@@ -91,14 +104,14 @@ const Sidebar = () => {
                     <div className="flex flex-col leading-5">
                         <p>{user.fullName}</p>
                         {
-                            index < 3 
+                            onlineUsers.includes(user._id)
                             ? <span className='text-green-400 text-xs'>Online</span> 
                             : <span className='text-neutral-400 text-xs'>Offline</span>
                         }
                     </div>
-                    {index > 2 && (
+                    {unseenMessages[user._id] > 0 && (
                         <p className='absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50'>
-                            {index}
+                            {unseenMessages[user._id]}
                         </p>
                     )}
                 </div>
