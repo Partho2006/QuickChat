@@ -14,7 +14,7 @@ const HomePage = () => {
     ? 'md:grid-cols-[300px_1fr_250px]' 
     : 'md:grid-cols-[300px_1fr]'}`}>     
             <Sidebar />
-            <ChartContainer selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+            <ChartContainer />
             <RightSidebar selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
         </div>
     </div>
