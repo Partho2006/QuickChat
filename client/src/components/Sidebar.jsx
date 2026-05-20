@@ -97,10 +97,10 @@ const Sidebar = () => {
                 {filteredUsers.map((user, index)=> (
                 <div 
                     key={user._id} 
-                    onClick={()=> {setSelectedUser(user)}} 
+                    onClick={()=> {setSelectedUser(user); setUnseenMessages(prev=> ({...prev, [user._id] : 0}))}} 
                     className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && 'bg-[#282142]/50'}`}
                 >
-                    <img src={user?.profilePic || assets.avatar_icon} alt="ProfilePic" className='w-[35px] aspect-[1/1] rounded-full' />
+                    <img src={user?.profilePic || assets.avatar_icon} alt="ProfilePic" className="w-[35px] aspect-[1/1] rounded-full object-cover border border-white/10 shadow-md" />
                     <div className="flex flex-col leading-5">
                         <p>{user.fullName}</p>
                         {
